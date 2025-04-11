@@ -1,13 +1,16 @@
 /******************************************************************
  *
  *   YOUR NAME / SECTION NUMBER
- *
+ *      Philip Garbis - 002
  *   This java file contains the problem solutions for the methods selectionSort,
  *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
  *
  ********************************************************************/
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ProblemSolutions {
 
@@ -42,6 +45,25 @@ public class ProblemSolutions {
             // "SELECTION SORT" ALGORITHM.
             // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
 
+            int selectedIndex = i;
+
+            // Find the min/max index based on ascending or descending
+            for (int j = i + 1; j < n; j++) {
+                if (ascending) {
+                    if (values[j] < values[selectedIndex]) {
+                        selectedIndex = j;
+                    }
+                } else {
+                    if (values[j] > values[selectedIndex]) {
+                        selectedIndex = j;
+                    }
+                }
+            }
+
+            // Swap values[i] with values[selectedIndex]
+            int temp = values[i];
+            values[i] = values[selectedIndex];
+            values[selectedIndex] = temp;
         }
 
     } // End class selectionSort
@@ -102,8 +124,77 @@ public class ProblemSolutions {
         // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
         // OF THIS PROGRAMMING EXERCISES.
 
-        return;
+        // Create temporary arrays for the two sorted halves
+        int[] leftArr = Arrays.copyOfRange(arr, left, mid + 1);
+        int[] rightArr = Arrays.copyOfRange(arr, mid + 1, right + 1);
 
+        // Temporary lists to hold the divisible and non-divisible by k numbers
+        List<Integer> divisible = new ArrayList<>();
+        List<Integer> notDivisible = new ArrayList<>();
+
+        // Merge the two halves while separating divisible and non-divisible numbers by k
+        int i = 0, j = 0;
+        while (i < leftArr.length && j < rightArr.length) {
+            // If leftArr[i] is divisible by k and rightArr[j] is not, place leftArr[i] first
+            if (leftArr[i] % k == 0 && rightArr[j] % k != 0) {
+                divisible.add(leftArr[i++]);
+            } else if (rightArr[j] % k == 0 && leftArr[i] % k != 0) {
+                divisible.add(rightArr[j++]);
+            } else if (leftArr[i] <= rightArr[j]) {
+                // Standard merge sort order when both are either divisible or not divisible
+                if (leftArr[i] % k == 0) {
+                    divisible.add(leftArr[i++]);
+                } else {
+                    notDivisible.add(leftArr[i++]);
+                }
+            } else {
+                if (rightArr[j] % k == 0) {
+                    divisible.add(rightArr[j++]);
+                } else {
+                    notDivisible.add(rightArr[j++]);
+                }
+            }
+        }
+
+        // Handle remaining elements from leftArr or rightArr
+        while (i < leftArr.length) {
+            if (leftArr[i] % k == 0) {
+                divisible.add(leftArr[i++]);
+            } else {
+                notDivisible.add(leftArr[i++]);
+            }
+        }
+
+        while (j < rightArr.length) {
+            if (rightArr[j] % k == 0) {
+                divisible.add(rightArr[j++]);
+            } else {
+                notDivisible.add(rightArr[j++]);
+            }
+        }
+
+        // Sort the divisible numbers in ascending order
+        Collections.sort(divisible);
+
+        // Sort the not divisible numbers in ascending order
+        Collections.sort(notDivisible);
+
+        // Combine the lists back into the original array in the correct order
+        int index = left;
+        for (int num : divisible) {
+            arr[index++] = num;
+        }
+        for (int num : notDivisible) {
+            arr[index++] = num;
+        }
+
+        /** What I was using to debug
+        // Printing for debugging
+        System.out.print("Array after merge [" + left + " to " + right + "]: ");
+        for (int t = left; t <= right; t++) {
+            System.out.print(arr[t] + " ");
+        }
+        System.out.println();*/
     }
 
 
@@ -156,8 +247,18 @@ public class ProblemSolutions {
 
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
 
-        return false;
+        Arrays.sort(asteroids); // Try smaller asteroids first
+        long currentMass = mass; // Use long to prevent overflow
 
+        for (int asteroid : asteroids) {
+            if (currentMass >= asteroid) {
+                currentMass += asteroid; // Planet absorbs asteroid
+            } else {
+                return false; // Planet destroyed
+            }
+        }
+
+        return true; // All asteroids destroyed
     }
 
 
@@ -194,8 +295,21 @@ public class ProblemSolutions {
 
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
 
-        return -1;
+        Arrays.sort(people); // Sort to pair lightest and heaviest
+        int i = 0, j = people.length - 1;
+        int sleds = 0;
 
+        while (i <= j) {
+            if (people[i] + people[j] <= limit) {
+                i++; // Pair lightest and heaviest
+                j--;
+            } else {
+                j--; // Heaviest alone
+            }
+            sleds++; // One sled used
+        }
+
+        return sleds;
     }
 
 } // End Class ProblemSolutions
