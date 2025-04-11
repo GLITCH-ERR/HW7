@@ -132,69 +132,31 @@ public class ProblemSolutions {
         List<Integer> divisible = new ArrayList<>();
         List<Integer> notDivisible = new ArrayList<>();
 
-        // Merge the two halves while separating divisible and non-divisible numbers by k
-        int i = 0, j = 0;
-        while (i < leftArr.length && j < rightArr.length) {
-            // If leftArr[i] is divisible by k and rightArr[j] is not, place leftArr[i] first
-            if (leftArr[i] % k == 0 && rightArr[j] % k != 0) {
-                divisible.add(leftArr[i++]);
-            } else if (rightArr[j] % k == 0 && leftArr[i] % k != 0) {
-                divisible.add(rightArr[j++]);
-            } else if (leftArr[i] <= rightArr[j]) {
-                // Standard merge sort order when both are either divisible or not divisible
-                if (leftArr[i] % k == 0) {
-                    divisible.add(leftArr[i++]);
-                } else {
-                    notDivisible.add(leftArr[i++]);
-                }
-            } else {
-                if (rightArr[j] % k == 0) {
-                    divisible.add(rightArr[j++]);
-                } else {
-                    notDivisible.add(rightArr[j++]);
-                }
-            }
+        // Collect numbers into the two lists in original order
+        for (int val : leftArr) {
+            if (val % k == 0) divisible.add(val);
+            else notDivisible.add(val);
         }
 
-        // Handle remaining elements from leftArr or rightArr
-        while (i < leftArr.length) {
-            if (leftArr[i] % k == 0) {
-                divisible.add(leftArr[i++]);
-            } else {
-                notDivisible.add(leftArr[i++]);
-            }
+        for (int val : rightArr) {
+            if (val % k == 0) divisible.add(val);
+            else notDivisible.add(val);
         }
 
-        while (j < rightArr.length) {
-            if (rightArr[j] % k == 0) {
-                divisible.add(rightArr[j++]);
-            } else {
-                notDivisible.add(rightArr[j++]);
-            }
-        }
-
-        // Sort the divisible numbers in ascending order
-        Collections.sort(divisible);
-
-        // Sort the not divisible numbers in ascending order
+        // Only sort the not-divisible ones
         Collections.sort(notDivisible);
 
         // Combine the lists back into the original array in the correct order
         int index = left;
-        for (int num : divisible) {
-            arr[index++] = num;
-        }
-        for (int num : notDivisible) {
-            arr[index++] = num;
-        }
-
-        /** What I was using to debug
+        for (int num : divisible) arr[index++] = num;
+        for (int num : notDivisible) arr[index++] = num;
+        
         // Printing for debugging
         System.out.print("Array after merge [" + left + " to " + right + "]: ");
         for (int t = left; t <= right; t++) {
             System.out.print(arr[t] + " ");
         }
-        System.out.println();*/
+        System.out.println();
     }
 
 
